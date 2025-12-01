@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { db } from "@/lib/firebase";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { db, auth } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 
 const activities = [
   "Tennis",
@@ -16,32 +18,47 @@ const activities = [
   "Gym workouts",
   "Walking",
   "Yoga",
+  "Other",
 ];
 
-// Helper to get today's date in YYYY-MM-DD format
-const getToday = () => {
-  return new Date().toISOString().split("T")[0];
-};
+// Helper to get today's date in YYYY-MM-DD
+const getToday = () => new Date().toISOString().split("T")[0];
 
 export default function NewMeetup() {
+  const router = useRouter();
+
+  // Require login before page loads
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (user) => {
+      if (!user) router.push("/login");
+    });
+    return () => unsub();
+  }, [router]);
+
   const [title, setTitle] = useState("");
   const [activity, setActivity] = useState("");
-  const [date, setDate] = useState(getToday);
+  const [date, setDate] = useState(getToday());
   const [time, setTime] = useState("");
   const [location, setLocation] = useState("");
   const [max, setMax] = useState(2);
+  const [description, setDescription] = useState("");
   const [created, setCreated] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const user = auth.currentUser;
+    if (!user) return router.push("/login");
+
     await addDoc(collection(db, "meetups"), {
       title,
       activity,
-      date,         // "2025-12-01"
-      time,         // "18:00"
+      date,
+      time,
       location,
       max,
+      description,
+      createdBy: user.email,
       participants: [],
       createdAt: serverTimestamp(),
     });
@@ -54,7 +71,7 @@ export default function NewMeetup() {
       <main className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
         <h1 className="text-3xl font-bold mb-4">Meetup Created 🎉</h1>
         <button
-          onClick={() => window.location.href = "/meetups"}
+          onClick={() => (window.location.href = "/meetups")}
           className="underline text-blue-600 font-semibold"
         >
           Back to Meetups →
@@ -92,7 +109,9 @@ export default function NewMeetup() {
           >
             <option value="">Select activity</option>
             {activities.map((a) => (
-              <option key={a} value={a}>{a}</option>
+              <option key={a} value={a}>
+                {a}
+              </option>
             ))}
           </select>
         </div>
@@ -107,9 +126,6 @@ export default function NewMeetup() {
             onChange={(e) => setDate(e.target.value)}
             required
           />
-          <p className="text-xs text-gray-500 text-left">
-            Pick the day you want to meet up.
-          </p>
         </div>
 
         {/* Time */}
@@ -122,9 +138,6 @@ export default function NewMeetup() {
             onChange={(e) => setTime(e.target.value)}
             required
           />
-          <p className="text-xs text-gray-500 text-left">
-            Use local time (ex: 18:30 for 6:30pm).
-          </p>
         </div>
 
         {/* Location */}
@@ -132,7 +145,7 @@ export default function NewMeetup() {
           <label className="font-medium text-left">Location</label>
           <input
             type="text"
-            placeholder="Piedmont Park, Stone Summit, etc."
+            placeholder="Piedmont Park, Kennesaw Trails, Stone Summit, etc."
             className="border px-4 py-3 rounded-lg"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
@@ -140,7 +153,7 @@ export default function NewMeetup() {
           />
         </div>
 
-        {/* Max players / people */}
+        {/* Max people */}
         <div className="flex flex-col gap-2">
           <label className="font-medium text-left">Max people</label>
           <input
@@ -152,9 +165,18 @@ export default function NewMeetup() {
             onChange={(e) => setMax(Number(e.target.value))}
             required
           />
-          <p className="text-xs text-gray-500 text-left">
-            How many people can join this meetup?
-          </p>
+        </div>
+
+        {/* Description */}
+        <div className="flex flex-col gap-2">
+          <label className="font-medium text-left">Description</label>
+          <textarea
+            placeholder="Give people context — skill level, vibe, equipment needed, parking, etc."
+            className="border px-4 py-3 rounded-lg h-32"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+          />
         </div>
 
         <button

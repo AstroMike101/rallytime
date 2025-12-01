@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { db } from "@/lib/firebase";
+import { db, auth } from "@/lib/firebase";
 import {
   collection,
   addDoc,
@@ -11,11 +11,12 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 
-const TEMP_USER_EMAIL = "test@rallytime.com";
-
 export default function Chat({ meetupId }: { meetupId: string }) {
   const [messages, setMessages] = useState<any[]>([]);
   const [text, setText] = useState("");
+
+  const user = auth.currentUser;
+  const userName = user?.displayName ?? user?.email ?? "Guest";
 
   useEffect(() => {
     const ref = collection(db, "meetups", meetupId, "messages");
@@ -26,9 +27,9 @@ export default function Chat({ meetupId }: { meetupId: string }) {
   }, [meetupId]);
 
   const send = async () => {
-    if (!text.trim()) return;
+    if (!text.trim() || !user) return;
     await addDoc(collection(db, "meetups", meetupId, "messages"), {
-      user: TEMP_USER_EMAIL,
+      user: userName,
       text,
       createdAt: serverTimestamp(),
     });
@@ -48,20 +49,28 @@ export default function Chat({ meetupId }: { meetupId: string }) {
         ))}
       </div>
 
-      <div className="flex gap-2 mt-3">
-        <input
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Message…"
-          className="border rounded-lg px-3 py-2 flex-1"
-        />
-        <button
-          onClick={send}
-          className="bg-black text-white px-4 py-2 rounded-lg font-semibold"
-        >
-          Send
-        </button>
-      </div>
+      {!user && (
+        <p className="text-blue-600 font-semibold text-center mt-3">
+          Please <a href="/login" className="underline">log in</a> to chat.
+        </p>
+      )}
+
+      {user && (
+        <div className="flex gap-2 mt-3">
+          <input
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="Message…"
+            className="border rounded-lg px-3 py-2 flex-1"
+          />
+          <button
+            onClick={send}
+            className="bg-black text-white px-4 py-2 rounded-lg font-semibold"
+          >
+            Send
+          </button>
+        </div>
+      )}
     </div>
   );
 }
