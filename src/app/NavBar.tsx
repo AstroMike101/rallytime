@@ -24,16 +24,16 @@ export default function NavBar() {
 
   return (
     <nav className="w-full border-b-2 border-black bg-white sticky top-0 z-20">
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-8 py-5">
-        <Link href="/" className="flex items-center gap-3 group">
-          <span className="text-3xl group-hover:scale-110 transition-transform">🎾</span>
-          <span className="font-black text-2xl tracking-tight">RallyTime</span>
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-8 py-4 sm:py-5">
+        <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
+          <span className="text-2xl sm:text-3xl group-hover:scale-110 transition-transform">🎾</span>
+          <span className="font-black text-lg sm:text-2xl tracking-tight">RallyTime</span>
         </Link>
 
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-3 sm:gap-8">
           <Link
             href="/meetups"
-            className={`text-base font-semibold transition-all ${
+            className={`text-xs sm:text-base font-semibold transition-all ${
               isActive("/meetups") 
                 ? "text-black border-b-2 border-black pb-1" 
                 : "text-gray-500 hover:text-black"
@@ -44,7 +44,7 @@ export default function NavBar() {
 
           <Link
             href="/meetups/new"
-            className={`text-base font-semibold transition-all ${
+            className={`text-xs sm:text-base font-semibold transition-all ${
               isActive("/meetups/new") 
                 ? "text-black border-b-2 border-black pb-1" 
                 : "text-gray-500 hover:text-black"
@@ -56,17 +56,17 @@ export default function NavBar() {
           {!user && (
             <Link
               href="/login"
-              className="text-base font-bold px-6 py-2.5 rounded-full bg-black text-white hover:bg-gray-900 hover:scale-105 transition-all shadow-md"
+              className="text-xs sm:text-base font-bold px-3 sm:px-6 py-1.5 sm:py-2.5 rounded-full bg-black text-white hover:bg-gray-900 hover:scale-105 transition-all shadow-md"
             >
               Login
             </Link>
           )}
 
           {user && (
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-3 sm:gap-6">
               <Link
                 href={`/users/${encodeURIComponent(user.email)}`}
-                className={`text-base font-semibold transition-all ${
+                className={`text-xs sm:text-base font-semibold transition-all ${
                   isActive(`/users/${encodeURIComponent(user.email)}`)
                     ? "text-black border-b-2 border-black pb-1"
                     : "text-gray-500 hover:text-black"
@@ -77,7 +77,7 @@ export default function NavBar() {
 
               <button
                 onClick={handleLogout}
-                className="text-base font-medium text-gray-500 hover:text-red-600 transition-colors"
+                className="text-xs sm:text-base font-medium text-gray-500 hover:text-red-600 transition-colors"
               >
                 Logout
               </button>
