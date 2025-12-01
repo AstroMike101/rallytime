@@ -26,7 +26,6 @@ export default function NavBar() {
     <nav className="w-full border-b-2 border-black bg-white sticky top-0 z-20">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-8 py-4 sm:py-5">
         <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
-          <span className="text-2xl sm:text-3xl group-hover:scale-110 transition-transform">🎾</span>
           <span className="font-black text-lg sm:text-2xl tracking-tight">RallyTime</span>
         </Link>
 
