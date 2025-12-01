@@ -23,18 +23,20 @@ export default function NavBar() {
   };
 
   return (
-    <nav className="w-full border-b bg-white/80 backdrop-blur sticky top-0 z-20">
-      <div className="max-w-4xl mx-auto flex items-center justify-between px-4 py-3">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="text-xl">🎾</span>
-          <span className="font-bold text-lg">RallyTime</span>
+    <nav className="w-full border-b-2 border-black bg-white sticky top-0 z-20">
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-8 py-5">
+        <Link href="/" className="flex items-center gap-3 group">
+          <span className="text-3xl group-hover:scale-110 transition-transform">🎾</span>
+          <span className="font-black text-2xl tracking-tight">RallyTime</span>
         </Link>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-8">
           <Link
             href="/meetups"
-            className={`text-sm font-medium ${
-              isActive("/meetups") ? "text-black" : "text-gray-500"
+            className={`text-base font-semibold transition-all ${
+              isActive("/meetups") 
+                ? "text-black border-b-2 border-black pb-1" 
+                : "text-gray-500 hover:text-black"
             }`}
           >
             Meetups
@@ -42,8 +44,10 @@ export default function NavBar() {
 
           <Link
             href="/meetups/new"
-            className={`text-sm font-medium ${
-              isActive("/meetups/new") ? "text-black" : "text-gray-500"
+            className={`text-base font-semibold transition-all ${
+              isActive("/meetups/new") 
+                ? "text-black border-b-2 border-black pb-1" 
+                : "text-gray-500 hover:text-black"
             }`}
           >
             Create
@@ -52,33 +56,28 @@ export default function NavBar() {
           {!user && (
             <Link
               href="/login"
-              className="text-sm font-semibold px-3 py-1 rounded-full border border-black"
+              className="text-base font-bold px-6 py-2.5 rounded-full bg-black text-white hover:bg-gray-900 hover:scale-105 transition-all shadow-md"
             >
               Login
             </Link>
           )}
 
           {user && (
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                {user.photoURL ? (
-                  <img
-                    src={user.photoURL}
-                    alt="avatar"
-                    className="w-8 h-8 rounded-full"
-                  />
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-xs">
-                    {user.email?.charAt(0).toUpperCase()}
-                  </div>
-                )}
-                <span className="text-sm font-medium max-w-[120px] truncate">
-                  {user.displayName ?? user.email}
-                </span>
-              </div>
+            <div className="flex items-center gap-6">
+              <Link
+                href={`/users/${encodeURIComponent(user.email)}`}
+                className={`text-base font-semibold transition-all ${
+                  isActive(`/users/${encodeURIComponent(user.email)}`)
+                    ? "text-black border-b-2 border-black pb-1"
+                    : "text-gray-500 hover:text-black"
+                }`}
+              >
+                Profile
+              </Link>
+
               <button
                 onClick={handleLogout}
-                className="text-xs text-gray-500 underline"
+                className="text-base font-medium text-gray-500 hover:text-red-600 transition-colors"
               >
                 Logout
               </button>
