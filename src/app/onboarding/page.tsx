@@ -65,10 +65,17 @@ export default function Onboarding() {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
         <h1 className="text-3xl font-bold mb-4">You're all set 🎉</h1>
-        <p className="text-gray-600 max-w-md">
+        <p className="text-gray-600 max-w-md mb-8">
           We’ll message you when there are activities and meetups that match your interests.
           RallyTime is launching first in Atlanta.
         </p>
+
+        <button
+          onClick={() => window.location.href = "/meetups"}
+          className="underline text-blue-600 font-semibold"
+        >
+          View RallyTime Meetups →
+        </button>
       </main>
     );
   }
